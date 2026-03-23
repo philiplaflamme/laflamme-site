@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Philip-Antoine Dupuis Laflamme — Conseil stratégique et communications numériques à Sherbrooke, Québec.">
+<title>Laflamme | Conseil stratégique · Communications numériques</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0f0f12;
+  --bg-card: #17171d;
+  --bg-card-hover: #1e1e27;
+  --charcoal: #1a1a22;
+  --charcoal-light: #26262f;
+  --purple-deep: #6b3fa0;
+  --purple-main: #8b5cf6;
+  --purple-light: #a78bfa;
+  --purple-glow: rgba(139, 92, 246, 0.15);
+  --purple-glow-strong: rgba(139, 92, 246, 0.3);
+  --text-primary: #e8e6f0;
+  --text-secondary: #9896a8;
+  --text-muted: #6b6980;
+  --white: #f5f3ff;
+  --border: rgba(139, 92, 246, 0.12);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── Splash screen ── */
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #0f0f12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#splash.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-L { display: block; }
+
+.L-frag {
+  transform-origin: 50px 55px;
+  opacity: 0;
+}
+
+.L-frag-1 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.0s forwards; }
+.L-frag-2 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards; }
+.L-frag-3 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.16s forwards; }
+.L-frag-4 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.24s forwards; }
+.L-frag-5 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.32s forwards; }
+.L-frag-6 { animation: spinIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.40s forwards; }
+
+@keyframes spinIn {
+  0% {
+    opacity: 0;
+    transform: rotate(280deg) scale(0.3) translate(60px, -40px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1) translate(0, 0);
+  }
+}
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* stagger children */
+.reveal-stagger > .reveal:nth-child(1) { transition-delay: 0s; }
+.reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.08s; }
+.reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.16s; }
+.reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.22s; }
+.reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.28s; }
+.reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.34s; }
+.reveal-stagger > .reveal:nth-child(7) { transition-delay: 0.38s; }
+.reveal-stagger > .reveal:nth-child(8) { transition-delay: 0.42s; }
+
+/* ── Navigation ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(15, 15, 18, 0.8);
+  border-bottom: 1px solid var(--border);
+  transition: padding 0.4s ease, background 0.4s ease;
+  will-change: transform;
+}
+
+nav.scrolled {
+  padding: 0.8rem 3rem;
+  background: rgba(15, 15, 18, 0.95);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.nav-logo span { color: var(--purple-light); }
+
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--purple-main);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--purple-light); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  width: 32px;
+  height: 24px;
+  position: relative;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  position: absolute;
+  left: 4px;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-toggle span:nth-child(1) { top: 3px; }
+.nav-toggle span:nth-child(2) { top: 11px; }
+.nav-toggle span:nth-child(3) { top: 19px; }
+
+.nav-toggle.active span:nth-child(1) {
+  top: 11px;
+  transform: rotate(45deg);
+}
+.nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+.nav-toggle.active span:nth-child(3) {
+  top: 11px;
+  transform: rotate(-45deg);
+}
+
+/* ── Layout ── */
+section { position: relative; z-index: 1; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 3rem; }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#heroCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+#heroCanvas.visible { opacity: 1; }
+
+.hero-bg-line {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--border), transparent);
+}
+
+.hero-bg-line:nth-child(2) { left: 20%; }
+.hero-bg-line:nth-child(3) { left: 50%; }
+.hero-bg-line:nth-child(4) { left: 80%; }
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 860px;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: heroFadeIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+
+@keyframes heroFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-name {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-name::before,
+.hero-name::after {
+  content: '';
+  height: 1px;
+  width: 28px;
+  background: linear-gradient(90deg, var(--purple-main), transparent);
+}
+
+.hero-name::after {
+  background: linear-gradient(90deg, transparent, var(--purple-main));
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  color: var(--white);
+  margin-bottom: 1.8rem;
+}
+
+.hero h1 em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--purple-light), #c4b5fd, var(--purple-main));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-description {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.hero-ctas { display: flex; gap: 1.2rem; align-items: center; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  background: var(--purple-main);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35), 0 0 60px rgba(139, 92, 246, 0.15);
+}
+
+.btn-primary:hover::before { opacity: 1; }
+
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--purple-light);
+  outline-offset: 3px;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--charcoal-light);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  color: var(--purple-light);
+  border-color: var(--purple-main);
+  background: var(--purple-glow);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
+}
+
+/* ── Section headers ── */
+.section-header { margin-bottom: 4rem; }
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--purple-light);
+  margin-bottom: 1rem;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1.5px;
+  background: var(--purple-main);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+}
+
+/* ── Services ── */
+.services {
+  padding: 8rem 0;
+  background: var(--charcoal);
+  position: relative;
+}
+
+.services::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple-glow-strong), transparent);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.service-card {
+  padding: 2.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--purple-deep), var(--purple-light));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.service-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(139, 92, 246, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 40px rgba(139, 92, 246, 0.06);
+}
+
+.service-card:hover::before { transform: scaleX(1); }
+
+.service-icon {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  background: var(--purple-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.4rem;
+  color: var(--purple-light);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  transition: all 0.4s ease;
+}
+
+.service-card:hover .service-icon {
+  background: rgba(139, 92, 246, 0.22);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+.service-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--purple-light);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.service-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.8rem;
+}
+
+.service-card p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+/* ── Expertise / About ── */
+.expertise { padding: 8rem 0; }
+
+.expertise-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.expertise-text p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.85;
+}
+
+.expertise-text p strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+#orreryCanvas {
+  display: block;
+  margin: -1rem auto 0;
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1;
+}
+
+/* ── Strengths list ── */
+.strengths-list {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.strength-item {
+  padding: 1rem 1.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--purple-deep);
+  border-radius: 0 8px 8px 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.35s ease;
+}
+
+.strength-item:hover {
+  border-left-color: var(--purple-light);
+  background: var(--bg-card-hover);
+  padding-left: 1.8rem;
+}
+
+/* ── Contact ── */
+.contact { padding: 8rem 0; }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.contact-info p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+}
+
+.contact-detail {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.contact-detail-icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--purple-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--purple-light);
+  border: 1px solid rgba(139, 92, 246, 0.12);
+  flex-shrink: 0;
+}
+
+.contact-detail-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--purple-light);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2.5rem;
+}
+
+.form-group { margin-bottom: 1.4rem; }
+
+.form-group label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  background: var(--charcoal);
+  border: 1px solid var(--charcoal-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--purple-main);
+  box-shadow: 0 0 0 3px var(--purple-glow);
+}
+
+.form-group input:focus-visible,
+.form-group textarea:focus-visible,
+.form-group select:focus-visible {
+  outline: none;
+}
+
+.form-group textarea { min-height: 120px; resize: vertical; }
+.form-group select option { background: var(--charcoal); color: var(--text-primary); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-submit { width: 100%; margin-top: 0.5rem; }
+
+/* ── Footer ── */
+footer {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple-main), transparent);
+}
+
+footer p {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+footer a {
+  color: var(--purple-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover { color: var(--white); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .container { padding: 0 1.5rem; }
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: rgba(15, 15, 18, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1.5rem 2rem;
+    gap: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-toggle { display: block; }
+  .expertise-layout,
+  .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: clamp(2.4rem, 8vw, 3.5rem); }
+  #heroCanvas { opacity: 0.7; }
+  #orreryCanvas { max-width: 360px; }
+}
+
+@media (max-width: 500px) {
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash">
+  <svg class="splash-L" viewBox="0 0 100 120" width="140" height="168">
+    <rect class="L-frag L-frag-1" x="15" y="0" width="22" height="30" rx="2" fill="#a78bfa"/>
+    <rect class="L-frag L-frag-2" x="15" y="30" width="22" height="30" rx="2" fill="#8b5cf6"/>
+    <rect class="L-frag L-frag-3" x="15" y="60" width="22" height="30" rx="2" fill="#a78bfa"/>
+    <rect class="L-frag L-frag-4" x="15" y="90" width="22" height="22" rx="2" fill="#8b5cf6"/>
+    <rect class="L-frag L-frag-5" x="37" y="90" width="24" height="22" rx="2" fill="#a78bfa"/>
+    <rect class="L-frag L-frag-6" x="61" y="90" width="24" height="22" rx="2" fill="#8b5cf6"/>
+  </svg>
+</div>
+
+<!-- Navigation -->
+<nav id="mainNav">
+  <a href="#hero" class="nav-logo"><span>L</span>aflamme</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#apropos">À propos</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div>
+  <div class="hero-bg-line"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-name">Philip Laflamme</div>
+      <h1>Conseil stratégique<br>et <em>communications numériques</em></h1>
+      <p class="hero-description">
+        Stratège en communications et conseiller politique. Une expertise forgée au cœur de la politique active, de la recherche universitaire et du numérique.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn-primary">Prendre contact ↗</a>
+        <a href="#services" class="btn-ghost">Découvrir mes services</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Ce que je fais</div>
+      <h2 class="section-title">Services</h2>
+    </div>
+    <div class="services-grid reveal-stagger">
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+        </div>
+        <h3>Conseil et analyse</h3>
+        <p>Accompagnement en positionnement, gestion de la réputation et affaires publiques. Un regard aiguisé par des années d'expérience dans les coulisses de la politique.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Communications numériques</h3>
+        <p>Stratégie de présence en ligne, campagnes ciblées et gestion de contenu web. Optimisation de l'empreinte numérique pour organisations et décideurs.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Stratégie politique</h3>
+        <p>Conseiller actif auprès d'élus et de cadres de partis politiques de tous les paliers, du municipal au fédéral.
+Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- À propos -->
+<section class="expertise" id="apropos">
+  <div class="container">
+    <div class="expertise-layout">
+      <div>
+        <div class="section-header reveal">
+          <div class="section-label">Qui je suis</div>
+          <h2 class="section-title">Politique, recherche<br>et numérique</h2>
+        </div>
+        <div class="expertise-text reveal">
+          <p>
+            Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J'ai occupé des fonctions décisionnelles au sein de formations politiques québécoises, ce qui m'a donné une compréhension intime des rouages du pouvoir, des médias et de l'opinion publique.
+          </p>
+          <p>
+            En parallèle, j'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l'Université Bishop's et à l'Université de Sherbrooke. J'ai collaboré avec des experts en psychologie du développement et de l'éducation, participé à des travaux de recherche publiés et contribué à l'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.
+          </p>
+          <p>
+           Cette rigueur scientifique nourrit directement ma pratique. Comprendre <strong>comment les gens pensent, apprennent et prennent des décisions</strong>, tout en étant au cœur même des enjeux, me permet de mettre cette approche méthodique et mes connaissances au service d'organisations qui ont des résultats à livrer.
+          </p>
+        </div>
+      </div>
+      <div>
+        <canvas id="orreryCanvas" class="reveal"></canvas>
+        <div class="strengths-list reveal-stagger">
+          <div class="strength-item reveal">Conseil stratégique et affaires publiques</div>
+          <div class="strength-item reveal">Communications numériques et marketing web</div>
+          <div class="strength-item reveal">Recherche en sciences sociales et en psychologie</div>
+          <div class="strength-item reveal">Organisation d'événements d'envergure nationale et internationale</div>
+          <div class="strength-item reveal">Gestion de crise et préparation médiatique</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-layout">
+      <div>
+        <div class="section-header reveal">
+          <div class="section-label">Parlons-en</div>
+          <h2 class="section-title">Me joindre</h2>
+        </div>
+        <div class="contact-info reveal">
+          <p>
+            Que ce soit pour du conseil stratégique, une campagne numérique, un accompagnement politique ou une collaboration, je suis disponible pour en discuter.
+          </p>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <span>Sherbrooke, Québec, Canada</span>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <a href="mailto:info@laflamme.me" style="color: var(--text-secondary); text-decoration: none; transition: color 0.3s;">info@laflamme.me</a>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <span>Bilingue · Français et anglais</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <form id="contactForm" action="https://formsubmit.co/info@laflamme.me" method="POST">
+          <input type="hidden" name="_subject" value="Nouveau message via laflamme.me">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">Prénom</label>
+              <input type="text" id="fname" name="prenom" placeholder="Votre prénom" required>
+            </div>
+            <div class="form-group">
+              <label for="lname">Nom</label>
+              <input type="text" id="lname" name="nom" placeholder="Votre nom">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Courriel</label>
+            <input type="email" id="email" name="email" placeholder="votre@courriel.com" required>
+          </div>
+          <div class="form-group">
+            <label for="service">Service recherché</label>
+            <select id="service" name="service">
+              <option value="">Sélectionnez un service</option>
+              <option>Conseil et analyse</option>
+              <option>Communications numériques</option>
+              <option>Stratégie politique</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Décrivez votre projet ou besoin..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary form-submit">Envoyer le message ↗</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@laflamme.me">laflamme.me</a> · Tous droits réservés</p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // ── Splash screen — dismiss after animation completes ──
+  var splash = document.getElementById('splash');
+  if (splash) {
+    setTimeout(function() {
+      splash.classList.add('hide');
+      setTimeout(function() { splash.remove(); }, 500);
+    }, 1200);
+  }
+
+  // ── Nav scroll effect (throttled with rAF + passive) ──
+  var nav = document.getElementById('mainNav');
+  var scrollTicking = false;
+  window.addEventListener('scroll', function() {
+    if (!scrollTicking) {
+      requestAnimationFrame(function() {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  // ── Mobile nav toggle with X animation ──
+  var navToggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', function() {
+    navLinks.classList.toggle('open');
+    navToggle.classList.toggle('active');
+  });
+  navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('active');
+    });
+  });
+
+  // ── Scroll reveal (IntersectionObserver) ──
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealEls.forEach(function(el) {
+      revealObserver.observe(el);
+    });
+  } else {
+    // Fallback: show everything
+    revealEls.forEach(function(el) { el.classList.add('visible'); });
+  }
+
+  // ── Hero parallax lines ──
+  var heroLines = document.querySelectorAll('.hero-bg-line');
+  if (heroLines.length) {
+    window.addEventListener('scroll', function() {
+      if (!scrollTicking) {
+        requestAnimationFrame(function() {
+          var y = window.scrollY;
+          if (y < window.innerHeight) {
+            heroLines.forEach(function(line, i) {
+              var speed = 0.15 + i * 0.08;
+              line.style.transform = 'translateY(' + (y * speed) + 'px)';
+            });
+          }
+        });
+      }
+    }, { passive: true });
+  }
+
+  // ── Particle constellation ──
+  (function() {
+    var canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var particles = [];
+    var count = 50;
+    var linkDist = 140;
+    var mouseRadius = 180;
+    var mouseX = -9999, mouseY = -9999;
+    var w, h, dpr;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function init() {
+      resize();
+      particles = [];
+      for (var i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          r: 1.2 + Math.random() * 1.2
+        });
+      }
+    }
+
+    init();
+    window.addEventListener('resize', function() { resize(); });
+
+    document.addEventListener('mousemove', function(e) {
+      var rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function() {
+      mouseX = -9999; mouseY = -9999;
+    }, { passive: true });
+
+    setTimeout(function() { canvas.classList.add('visible'); }, 1400);
+
+    var running = true;
+
+    function draw() {
+      if (!running) return;
+      ctx.clearRect(0, 0, w, h);
+
+      // update positions
+      for (var i = 0; i < count; i++) {
+        var p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // wrap edges
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+        if (p.y < -10) p.y = h + 10;
+        if (p.y > h + 10) p.y = -10;
+
+        // gentle mouse attraction
+        var dx = mouseX - p.x;
+        var dy = mouseY - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouseRadius && dist > 1) {
+          var pull = 0.008 * (1 - dist / mouseRadius);
+          p.vx += dx / dist * pull;
+          p.vy += dy / dist * pull;
+        }
+
+        // speed limit
+        var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > 0.6) {
+          p.vx *= 0.6 / speed;
+          p.vy *= 0.6 / speed;
+        }
+      }
+
+      // draw links
+      for (var i = 0; i < count; i++) {
+        for (var j = i + 1; j < count; j++) {
+          var a = particles[i], b = particles[j];
+          var dx = a.x - b.x;
+          var dy = a.y - b.y;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d < linkDist) {
+            var alpha = (1 - d / linkDist) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = 'rgba(139, 92, 246, ' + alpha.toFixed(3) + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // draw mouse links
+      if (mouseX > 0 && mouseY > 0) {
+        for (var i = 0; i < count; i++) {
+          var p = particles[i];
+          var dx = mouseX - p.x;
+          var dy = mouseY - p.y;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d < mouseRadius) {
+            var alpha = (1 - d / mouseRadius) * 0.12;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.strokeStyle = 'rgba(167, 139, 250, ' + alpha.toFixed(3) + ')';
+            ctx.lineWidth = 0.4;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // draw dots
+      for (var i = 0; i < count; i++) {
+        var p = particles[i];
+        // brighter if near mouse
+        var dx = mouseX - p.x;
+        var dy = mouseY - p.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        var glow = d < mouseRadius ? (1 - d / mouseRadius) * 0.5 : 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(167, 139, 250, ' + (0.25 + glow).toFixed(3) + ')';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    var obs = new IntersectionObserver(function(entries) {
+      running = entries[0].isIntersecting;
+      if (running) draw();
+    }, { threshold: 0 });
+    obs.observe(canvas);
+
+    draw();
+  })();
+
+  // ── Orrery (solar system) ──
+  (function() {
+    var c = document.getElementById('orreryCanvas');
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    if (!ctx) return;
+
+    var dpr, size;
+    var mouseX = -9999, mouseY = -9999;
+
+    var orbits = [
+      { r: 0.18, baseSpeed: 0.0014, speed: 0.0014, tilt: -30, bodyR: 5.5, color: [196,181,253], alpha: 0.9, angle: Math.random() * Math.PI * 2 },
+      { r: 0.30, baseSpeed: -0.0009, speed: -0.0009, tilt: 20, bodyR: 4, color: [167,139,250], alpha: 0.8, angle: Math.random() * Math.PI * 2 },
+      { r: 0.42, baseSpeed: 0.0006, speed: 0.0006, tilt: -12, bodyR: 3, color: [139,92,246], alpha: 0.7, angle: Math.random() * Math.PI * 2 },
+      { r: 0.52, baseSpeed: -0.0003, speed: -0.0003, tilt: 35, bodyR: 2.2, color: [124,58,237], alpha: 0.55, angle: Math.random() * Math.PI * 2 },
+    ];
+
+    var moons = [
+      { orbit: 0, offset: Math.PI * 0.4, dist: 0.055, r: 2, baseSpeed: 0.005, speed: 0.005, angle: 0 },
+      { orbit: 1, offset: Math.PI * 1.1, dist: 0.06, r: 1.5, baseSpeed: -0.004, speed: -0.004, angle: 0 },
+      { orbit: 2, offset: Math.PI * 0.8, dist: 0.05, r: 1.3, baseSpeed: 0.006, speed: 0.006, angle: 0 },
+    ];
+
+    var boostRadius;
+    var maxBoost = 8;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      size = c.clientWidth;
+      c.width = size * dpr;
+      c.height = size * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      boostRadius = size * 0.28;
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    document.addEventListener('mousemove', function(e) {
+      var rect = c.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    }, { passive: true });
+
+    c.addEventListener('mouseleave', function() {
+      mouseX = -9999; mouseY = -9999;
+    }, { passive: true });
+
+    var running = true;
+
+    function frame() {
+      if (!running) { requestAnimationFrame(frame); return; }
+      ctx.clearRect(0, 0, size, size);
+
+      var cx = size / 2;
+      var cy = size / 2;
+
+      // center glow
+      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 0.14);
+      grad.addColorStop(0, 'rgba(167, 139, 250, 0.22)');
+      grad.addColorStop(0.4, 'rgba(139, 92, 246, 0.06)');
+      grad.addColorStop(1, 'rgba(139, 92, 246, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+
+      // center dot
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(232, 230, 240, 0.7)';
+      ctx.fill();
+      var cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 18);
+      cg.addColorStop(0, 'rgba(232, 230, 240, 0.12)');
+      cg.addColorStop(1, 'rgba(232, 230, 240, 0)');
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (var i = 0; i < orbits.length; i++) {
+        var o = orbits[i];
+        var rx = o.r * size;
+        var ry = rx * 0.38;
+        var tiltRad = o.tilt * Math.PI / 180;
+        var tcos = Math.cos(tiltRad), tsin = Math.sin(tiltRad);
+
+        // draw orbit ellipse — solid, fixed
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(tiltRad);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(' + o.color.join(',') + ', 0.18)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+
+        // planet world position
+        var bx = Math.cos(o.angle) * rx;
+        var by = Math.sin(o.angle) * ry;
+        var wx = cx + bx * tcos - by * tsin;
+        var wy = cy + bx * tsin + by * tcos;
+
+        // mouse proximity → speed boost
+        var dx = wx - mouseX;
+        var dy = wy - mouseY;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var proximity = dist < boostRadius ? (1 - dist / boostRadius) : 0;
+        var targetSpeed = o.baseSpeed * (1 + proximity * maxBoost);
+        // ease the speed change
+        o.speed += (targetSpeed - o.speed) * 0.08;
+
+        // advance angle
+        o.angle += o.speed;
+
+        // trail — longer when fast
+        var currentBoost = Math.abs(o.speed / o.baseSpeed);
+        var trailLen = Math.floor(6 + currentBoost * 4);
+        var trailStep = Math.abs(o.speed) * 12;
+        var sign = o.speed >= 0 ? 1 : -1;
+        for (var t = 1; t <= trailLen; t++) {
+          var ta = o.angle - sign * t * trailStep;
+          var tbx = Math.cos(ta) * rx;
+          var tby = Math.sin(ta) * ry;
+          var twx = cx + tbx * tcos - tby * tsin;
+          var twy = cy + tbx * tsin + tby * tcos;
+          var fade = 1 - t / (trailLen + 1);
+          var talpha = fade * 0.22 * o.alpha;
+          var tr = o.bodyR * (1 - t * 0.04);
+          ctx.beginPath();
+          ctx.arc(twx, twy, Math.max(0.5, tr), 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + o.color.join(',') + ', ' + talpha.toFixed(3) + ')';
+          ctx.fill();
+        }
+
+        // body
+        ctx.beginPath();
+        ctx.arc(wx, wy, o.bodyR, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + o.color.join(',') + ', ' + o.alpha + ')';
+        ctx.fill();
+
+        // glow — brighter when boosted
+        var glowAlpha = 0.15 + proximity * 0.3;
+        var glowSize = o.bodyR * (5 + proximity * 4);
+        var bg = ctx.createRadialGradient(wx, wy, 0, wx, wy, glowSize);
+        bg.addColorStop(0, 'rgba(' + o.color.join(',') + ', ' + glowAlpha.toFixed(2) + ')');
+        bg.addColorStop(1, 'rgba(' + o.color.join(',') + ', 0)');
+        ctx.fillStyle = bg;
+        ctx.beginPath();
+        ctx.arc(wx, wy, glowSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        o._wx = wx;
+        o._wy = wy;
+      }
+
+      // moons
+      for (var i = 0; i < moons.length; i++) {
+        var m = moons[i];
+        var parent = orbits[m.orbit];
+        var mdist = m.dist * size;
+
+        // moon also boosts near mouse
+        var mmx = parent._wx + Math.cos(m.angle) * mdist;
+        var mmy = parent._wy + Math.sin(m.angle) * mdist * 0.55;
+        var mdx = mmx - mouseX;
+        var mdy = mmy - mouseY;
+        var md = Math.sqrt(mdx * mdx + mdy * mdy);
+        var mProx = md < boostRadius * 0.6 ? (1 - md / (boostRadius * 0.6)) : 0;
+        var mTarget = m.baseSpeed * (1 + mProx * maxBoost);
+        m.speed += (mTarget - m.speed) * 0.08;
+        m.angle += m.speed;
+
+        mmx = parent._wx + Math.cos(m.angle) * mdist;
+        mmy = parent._wy + Math.sin(m.angle) * mdist * 0.55;
+        ctx.beginPath();
+        ctx.arc(mmx, mmy, m.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(196, 181, 253, ' + (0.4 + mProx * 0.35).toFixed(2) + ')';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    var obs = new IntersectionObserver(function(entries) {
+      running = entries[0].isIntersecting;
+    }, { threshold: 0 });
+    obs.observe(c);
+
+    frame();
+  })();
+})();
+</script>
+</body>
+</html>
