@@ -109,7 +109,7 @@ async function handleContact(request, env) {
       },
       body: JSON.stringify({
         from: `Site dupuislaflamme.ca <noreply@dupuislaflamme.ca>`,
-        to: ['info@laflamme.me'],
+        to: ['info@dupuislaflamme.ca'],
         reply_to: email,
         subject: safeSubject,
         html: `
