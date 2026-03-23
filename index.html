@@ -1498,23 +1498,25 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
       })
       .then(function(res) {
         if (!res.ok) throw new Error('fail');
-        btn.textContent = '✓';
+        var successMsg = document.documentElement.lang === 'en' ? '✓ Message sent' : '✓ Message bien envoyé';
+        btn.textContent = successMsg;
         btn.style.background = '#059669';
         form.reset();
         setTimeout(function() {
           btn.textContent = origText;
           btn.style.background = '';
           btn.disabled = false;
-        }, 3000);
+        }, 4000);
       })
       .catch(function() {
-        btn.textContent = 'Erreur';
+        var errorMsg = document.documentElement.lang === 'en' ? 'Error — try again' : 'Erreur — réessayez';
+        btn.textContent = errorMsg;
         btn.style.background = '#dc2626';
         setTimeout(function() {
           btn.textContent = origText;
           btn.style.background = '';
           btn.disabled = false;
-        }, 3000);
+        }, 4000);
       });
     });
   })();
