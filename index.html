@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -654,8 +653,6 @@ section { position: relative; z-index: 1; }
 .form-group select option { background: var(--charcoal); color: var(--text-primary); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-submit { width: 100%; margin-top: 0.5rem; }
-.cf-turnstile { margin: 1rem 0 0.5rem; }
-
 /* ── Footer ── */
 footer {
   padding: 3rem 0;
@@ -904,7 +901,7 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
             <label for="message" data-i18n="form.msg">Message</label>
             <textarea id="message" name="message" data-i18n-ph="form.msg_ph" placeholder="Décrivez votre projet ou besoin..." required></textarea>
           </div>
-          <div class="cf-turnstile" data-sitekey="YOUR_TURNSTILE_SITE_KEY" data-theme="dark"></div>
+          <input type="text" name="website" style="position:absolute;left:-9999px;opacity:0;height:0" tabindex="-1" autocomplete="off">
           <button type="submit" class="btn-primary form-submit" data-i18n="form.submit">Envoyer le message ↗</button>
         </form>
       </div>

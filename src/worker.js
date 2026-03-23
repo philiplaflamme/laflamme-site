@@ -16,6 +16,23 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_FIELD = 500;
 const MAX_MESSAGE = 5000;
 
+// Simple in-memory rate limit: max 3 submissions per IP per 10 minutes
+const rateMap = new Map();
+const RATE_WINDOW = 10 * 60 * 1000;
+const RATE_MAX = 3;
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now - entry.start > RATE_WINDOW) {
+    rateMap.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  entry.count++;
+  if (entry.count > RATE_MAX) return true;
+  return false;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -49,14 +66,27 @@ async function handleContact(request, env) {
     return respond(403, { error: 'Forbidden' });
   }
 
+  // Rate limiting by IP
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  if (isRateLimited(ip)) {
+    return respond(429, { error: 'Too many requests' });
+  }
+
   try {
     const data = await request.formData();
+
+    // Honeypot: if the hidden "website" field is filled, it's a bot
+    const honeypot = data.get('website') || '';
+    if (honeypot) {
+      // Silently accept to not tip off the bot
+      return respond(200, { success: true });
+    }
+
     const prenom = truncate(data.get('prenom') || '', MAX_FIELD);
     const nom = truncate(data.get('nom') || '', MAX_FIELD);
     const email = truncate(data.get('email') || '', MAX_FIELD);
     const service = truncate(data.get('service') || '', MAX_FIELD);
     const message = truncate(data.get('message') || '', MAX_MESSAGE);
-    const turnstileToken = data.get('cf-turnstile-response') || '';
 
     // Required fields
     if (!prenom || !email || !message) {
@@ -66,23 +96,6 @@ async function handleContact(request, env) {
     // Email format validation
     if (!EMAIL_REGEX.test(email)) {
       return respond(400, { error: 'Invalid email' });
-    }
-
-    // Turnstile verification
-    if (env.TURNSTILE_SECRET_KEY) {
-      const tsResult = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          secret: env.TURNSTILE_SECRET_KEY,
-          response: turnstileToken,
-          remoteip: request.headers.get('CF-Connecting-IP') || '',
-        }),
-      });
-      const tsData = await tsResult.json();
-      if (!tsData.success) {
-        return respond(403, { error: 'CAPTCHA verification failed' });
-      }
     }
 
     const fullName = nom ? `${prenom} ${nom}` : prenom;
