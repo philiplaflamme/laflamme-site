@@ -873,10 +873,7 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
         </div>
       </div>
       <div class="contact-form reveal">
-        <form id="contactForm" action="https://formsubmit.co/info@dupuislaflamme.ca" method="POST">
-          <input type="hidden" name="_subject" value="Nouveau message via dupuislaflamme.ca">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_next" value="">
+        <form id="contactForm">
           <div class="form-row">
             <div class="form-group">
               <label for="fname" data-i18n="form.fname">Prénom</label>
@@ -1479,6 +1476,47 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
     obs.observe(c);
 
     frame();
+  })();
+
+  // ── Contact form (Resend via Worker) ──
+  (function() {
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+    var btn = form.querySelector('.form-submit');
+    var origText = btn.textContent;
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = '...';
+
+      var formData = new FormData(form);
+
+      fetch('/api/contact', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('fail');
+        btn.textContent = '✓';
+        btn.style.background = '#059669';
+        form.reset();
+        setTimeout(function() {
+          btn.textContent = origText;
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 3000);
+      })
+      .catch(function() {
+        btn.textContent = 'Erreur';
+        btn.style.background = '#dc2626';
+        setTimeout(function() {
+          btn.textContent = origText;
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 3000);
+      });
+    });
   })();
 
   // ── i18n ──
