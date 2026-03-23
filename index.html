@@ -410,6 +410,7 @@ section { position: relative; z-index: 1; }
   padding: 8rem 0;
   background: var(--charcoal);
   position: relative;
+  overflow: hidden;
 }
 
 .services::before {
@@ -420,6 +421,21 @@ section { position: relative; z-index: 1; }
   background: linear-gradient(90deg, transparent, var(--purple-glow-strong), transparent);
 }
 
+#servicesMeshCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#servicesMeshCanvas.visible { opacity: 1; }
+
+.services .container { position: relative; z-index: 1; }
+
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -428,7 +444,9 @@ section { position: relative; z-index: 1; }
 
 .service-card {
   padding: 2.2rem;
-  background: var(--bg-card);
+  background: rgba(23, 23, 29, 0.40);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -448,7 +466,7 @@ section { position: relative; z-index: 1; }
 }
 
 .service-card:hover {
-  background: var(--bg-card-hover);
+  background: rgba(30, 30, 39, 0.50);
   border-color: rgba(139, 92, 246, 0.25);
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), 0 0 40px rgba(139, 92, 246, 0.06);
@@ -824,6 +842,7 @@ footer a:hover { color: var(--white); }
 
 <!-- Services -->
 <section class="services" id="services">
+  <canvas id="servicesMeshCanvas"></canvas>
   <div class="container">
     <div class="section-header reveal">
       <div class="section-label" data-i18n="services.label">Ce que je fais</div>
@@ -869,7 +888,7 @@ footer a:hover { color: var(--white); }
             Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J'ai occupé des fonctions décisionnelles au sein de formations politiques québécoises, ce qui m'a donné une compréhension intime des rouages du pouvoir, des médias et de l'opinion publique.
           </p>
           <p data-i18n="about.p2">
-            En parallèle, j'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l'Université Bishop's et à l'Université de Sherbrooke. J'ai collaboré avec des experts en psychologie du développement et de l'éducation, participé à des travaux de recherche publiés et contribué à l'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.
+            En parallèle, j'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l'Université Bishop's et à l'Université de Sherbrooke. J'ai collaboré avec des experts en psychologie du développement et de l'éducation, participé à des travaux publiés et contribué à l'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.
           </p>
           <p data-i18n="about.p3">
            Cette rigueur scientifique nourrit directement ma pratique. Comprendre <strong>comment les gens pensent, apprennent et prennent des décisions</strong>, tout en étant au cœur même des enjeux, me permet de mettre cette approche méthodique et mes connaissances au service d'organisations qui ont des résultats à livrer.
@@ -1329,6 +1348,337 @@ footer a:hover { color: var(--white); }
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(167, 139, 250, ' + (0.25 + glow).toFixed(3) + ')';
         ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    var obs = new IntersectionObserver(function(entries) {
+      running = entries[0].isIntersecting;
+      if (running) draw();
+    }, { threshold: 0 });
+    obs.observe(canvas);
+
+    draw();
+  })();
+
+  // ── Services 3D layered mesh ──
+  (function() {
+    var canvas = document.getElementById('servicesMeshCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var w, h, dpr;
+    var mouseX = -9999, mouseY = -9999;
+    var mouseRadius = 300;
+    var time = 0;
+    var perspective = 800;
+
+    // 3 ribbon layers with different parameters
+    var layers = [
+      { cols: 100, rows: 35, zOff: 80,  speed: 0.7, opacity: 0.55, ribbonW: 0.55, pathShift: -0.08, bend: 0.22, sCurve: 0.08, dotBase: 0.8,  lineBase: 0.5 },
+      { cols: 120, rows: 40, zOff: 0,   speed: 1.0, opacity: 0.85, ribbonW: 0.65, pathShift: 0,     bend: 0.18, sCurve: 0.05, dotBase: 1.0,  lineBase: 0.6 },
+      { cols: 90,  rows: 30, zOff: -60, speed: 1.3, opacity: 0.70, ribbonW: 0.45, pathShift: 0.07,  bend: 0.14, sCurve: 0.07, dotBase: 0.9,  lineBase: 0.45 }
+    ];
+
+    // seeded pseudo-random for deterministic jitter
+    function seededRand(seed) {
+      var x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+      return x - Math.floor(x);
+    }
+
+    // pre-allocate per layer + generate jitter offsets
+    for (var l = 0; l < layers.length; l++) {
+      var L = layers[l];
+      var tot = L.cols * L.rows;
+      L.px = new Float32Array(tot);
+      L.py = new Float32Array(tot);
+      L.pz = new Float32Array(tot);
+      L.palpha = new Float32Array(tot);
+      // random jitter per point — generated once, stable across frames
+      L.jitterU = new Float32Array(tot);
+      L.jitterV = new Float32Array(tot);
+      L.jitterZ = new Float32Array(tot);
+      for (var i = 0; i < tot; i++) {
+        var seed = i * 13.37 + l * 997.1;
+        L.jitterU[i] = (seededRand(seed) - 0.5) * 2;       // -1..1
+        L.jitterV[i] = (seededRand(seed + 77.7) - 0.5) * 2;
+        L.jitterZ[i] = (seededRand(seed + 155.3) - 0.5) * 2;
+      }
+    }
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = canvas.clientWidth;
+      h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    var section = canvas.parentElement;
+    section.addEventListener('mousemove', function(e) {
+      var rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    }, { passive: true });
+    section.addEventListener('mouseleave', function() {
+      mouseX = -9999; mouseY = -9999;
+    }, { passive: true });
+
+    setTimeout(function() { canvas.classList.add('visible'); }, 600);
+
+    var running = true;
+
+    // organic edge noise — multiple sine waves for irregular boundary
+    function organicTaper(u, v, layerIdx) {
+      var base = Math.sin(u * Math.PI);
+      // irregular edge waves
+      var n1 = Math.sin(u * 7.3 + layerIdx * 2.1) * 0.15;
+      var n2 = Math.sin(u * 13.7 + layerIdx * 4.3 + v * 3) * 0.08;
+      var n3 = Math.cos(u * 21.1 + layerIdx * 1.7) * 0.05;
+      var taper = base + n1 + n2 + n3;
+      // softer fade at edges — don't hard clip
+      var edgeSoft = 1 - Math.pow(Math.abs(v - 0.5) * 2, 2.5);
+      return Math.max(taper, 0.05) * Math.max(edgeSoft, 0);
+    }
+
+    function computeLayer(L, li) {
+      var t = time * L.speed;
+      var sx = w * 1.15, sy = h * -0.2 + L.pathShift * h;
+      var ex = w * -0.15, ey = h * 1.2 + L.pathShift * h * 0.5;
+      var rw = h * L.ribbonW;
+
+      var idx = 0;
+      for (var r = 0; r < L.rows; r++) {
+        var v = r / (L.rows - 1);
+        for (var c = 0; c < L.cols; c++) {
+          var u = c / (L.cols - 1);
+
+          // spine: S-curve path
+          var bx = sx + (ex - sx) * u;
+          var by = sy + (ey - sy) * u;
+          bx += Math.sin(u * Math.PI) * w * L.bend;
+          by += Math.sin(u * Math.PI * 2) * h * L.sCurve;
+          // secondary wiggle
+          bx += Math.cos(u * Math.PI * 3 + li * 1.5) * w * 0.03;
+
+          // perpendicular spread
+          var tAngle = Math.atan2(ey - sy, ex - sx) + Math.cos(u * Math.PI) * 0.5 + Math.sin(u * Math.PI * 2) * 0.15;
+          var px = Math.cos(tAngle + Math.PI * 0.5);
+          var py = Math.sin(tAngle + Math.PI * 0.5);
+
+          // organic taper for flowing, non-linear edges
+          var taper = organicTaper(u, v, li);
+          var offset = (v - 0.5) * rw * taper;
+
+          // apply per-point random jitter to break grid regularity
+          var jU = L.jitterU[idx] * 0.012;  // ~1.2% of u range
+          var jV = L.jitterV[idx] * 0.025;  // stronger across width
+
+          var x3d = bx + px * offset;
+          var y3d = by + py * offset;
+          // positional jitter — offset in both spine and perpendicular directions
+          x3d += jU * w * 0.08 + px * jV * rw * 0.06;
+          y3d += jU * h * 0.05 + py * jV * rw * 0.06;
+
+          // Z: multi-layered waves + per-point z jitter
+          var edgeFade = Math.sin(v * Math.PI);
+          var z = L.zOff;
+          z += Math.sin(u * 5.0 + t * 2.0 + li) * 55 * edgeFade;
+          z += Math.cos(v * 3.2 + u * 2.8 - t * 1.4 + li * 0.7) * 35 * edgeFade;
+          z += Math.sin(u * 8.5 + v * 5 + t * 2.2 + li * 1.3) * 18 * edgeFade;
+          z += Math.cos(u * 14 + t * 1.0) * 8 * edgeFade;
+          z += L.jitterZ[idx] * 25;
+
+          // project
+          var sc = perspective / (perspective + z);
+          var fx = (x3d - w * 0.5) * sc + w * 0.5;
+          var fy = (y3d - h * 0.5) * sc + h * 0.5;
+
+          L.px[idx] = fx;
+          L.py[idx] = fy;
+          L.pz[idx] = z;
+          L.palpha[idx] = taper * edgeFade;
+          idx++;
+        }
+      }
+    }
+
+    function drawHalo() {
+      // soft purple halo behind the mesh — multiple overlapping radial gradients
+      var halos = [
+        { x: w * 0.85, y: h * 0.12, rx: w * 0.4,  ry: h * 0.4,  a: 0.08 },
+        { x: w * 0.6,  y: h * 0.4,  rx: w * 0.5,  ry: h * 0.5,  a: 0.05 },
+        { x: w * 0.35, y: h * 0.65, rx: w * 0.45, ry: h * 0.45, a: 0.045 },
+        { x: w * 0.12, y: h * 0.9,  rx: w * 0.35, ry: h * 0.35, a: 0.04 }
+      ];
+
+      for (var i = 0; i < halos.length; i++) {
+        var hl = halos[i];
+        ctx.save();
+        ctx.translate(hl.x, hl.y);
+        ctx.scale(1, hl.ry / hl.rx);
+        var grad = ctx.createRadialGradient(0, 0, 0, 0, 0, hl.rx);
+        grad.addColorStop(0, 'rgba(139, 92, 246, ' + hl.a + ')');
+        grad.addColorStop(0.5, 'rgba(107, 63, 160, ' + (hl.a * 0.5) + ')');
+        grad.addColorStop(1, 'rgba(107, 63, 160, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, hl.rx, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function drawLayer(L, li) {
+      var COLS = L.cols, ROWS = L.rows;
+      var layerOp = L.opacity;
+
+      // draw connection lines along rows (flow direction) — skip ~15% randomly
+      for (var r = 0; r < ROWS; r++) {
+        for (var c = 0; c < COLS - 1; c++) {
+          if (seededRand(r * 3.17 + c * 9.73 + li * 47.1) > 0.85) continue;
+          var i = r * COLS + c;
+          var i2 = i + 1;
+
+          var a1 = L.palpha[i], a2 = L.palpha[i2];
+          if (a1 < 0.05 && a2 < 0.05) continue;
+
+          var x1 = L.px[i], y1 = L.py[i], z1 = L.pz[i];
+          var x2 = L.px[i2], y2 = L.py[i2];
+
+          // mouse glow at midpoint
+          var mx = (x1 + x2) * 0.5, my = (y1 + y2) * 0.5;
+          var mdx = mouseX - mx, mdy = mouseY - my;
+          var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          var glow = mDist < mouseRadius ? (1 - mDist / mouseRadius) : 0;
+          glow = glow * glow;
+
+          var avg = (a1 + a2) * 0.5;
+          var alpha = (avg * 0.18 + glow * 0.3) * layerOp;
+          if (alpha < 0.008) continue;
+
+          var dn = (z1 + 100) / 200;
+          dn = dn < 0 ? 0 : dn > 1 ? 1 : dn;
+          var rr = Math.round(90 + dn * 55 + glow * 50);
+          var gg = Math.round(50 + dn * 45 + glow * 65);
+          var bb = Math.round(190 + dn * 45 + glow * 15);
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = 'rgba(' + rr + ', ' + gg + ', ' + bb + ', ' + alpha.toFixed(3) + ')';
+          ctx.lineWidth = L.lineBase + glow * 0.6;
+          ctx.stroke();
+        }
+      }
+
+      // draw connection lines along columns (cross direction) — irregular spacing
+      for (var c = 0; c < COLS; c++) {
+        // use seeded random to decide which columns get cross-lines — ~30% of them
+        if (seededRand(c * 7.13 + li * 31.7) > 0.3) continue;
+        for (var r = 0; r < ROWS - 1; r++) {
+          // also skip some rows randomly for asymmetry
+          if (seededRand(r * 11.3 + c * 5.7 + li * 19.1) > 0.6) continue;
+          var i = r * COLS + c;
+          var i2 = (r + 1) * COLS + c;
+
+          var a1 = L.palpha[i], a2 = L.palpha[i2];
+          if (a1 < 0.05 && a2 < 0.05) continue;
+
+          var x1 = L.px[i], y1 = L.py[i], z1 = L.pz[i];
+          var x2 = L.px[i2], y2 = L.py[i2];
+
+          var mx = (x1 + x2) * 0.5, my = (y1 + y2) * 0.5;
+          var mdx = mouseX - mx, mdy = mouseY - my;
+          var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          var glow = mDist < mouseRadius ? (1 - mDist / mouseRadius) : 0;
+          glow = glow * glow;
+
+          var avg = (a1 + a2) * 0.5;
+          var alpha = (avg * 0.1 + glow * 0.2) * layerOp;
+          if (alpha < 0.008) continue;
+
+          var dn = (z1 + 100) / 200;
+          dn = dn < 0 ? 0 : dn > 1 ? 1 : dn;
+          var rr = Math.round(90 + dn * 55 + glow * 50);
+          var gg = Math.round(50 + dn * 45 + glow * 65);
+          var bb = Math.round(190 + dn * 45 + glow * 15);
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = 'rgba(' + rr + ', ' + gg + ', ' + bb + ', ' + alpha.toFixed(3) + ')';
+          ctx.lineWidth = (L.lineBase * 0.7) + glow * 0.5;
+          ctx.stroke();
+        }
+      }
+
+      // draw dots — randomized selection, ~40% of points
+      for (var r = 0; r < ROWS; r++) {
+        for (var c = 0; c < COLS; c++) {
+          if (seededRand(r * 17.31 + c * 7.91 + li * 53.3) > 0.4) continue;
+          var i = r * COLS + c;
+          var fa = L.palpha[i];
+          if (fa < 0.08) continue;
+
+          var x = L.px[i], y = L.py[i], z = L.pz[i];
+
+          var mdx = mouseX - x, mdy = mouseY - y;
+          var mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+          var glow = mDist < mouseRadius ? (1 - mDist / mouseRadius) : 0;
+          glow = glow * glow;
+
+          var dn = (z + 100) / 200;
+          dn = dn < 0 ? 0 : dn > 1 ? 1 : dn;
+
+          var alpha = (fa * (0.3 + dn * 0.25) + glow * 0.6) * layerOp;
+          if (alpha < 0.015) continue;
+          alpha = alpha > 0.85 ? 0.85 : alpha;
+
+          var sc = perspective / (perspective + z);
+          var dotR = L.dotBase * (0.4 + sc * 0.6) + glow * 0.6;
+
+          var rr, gg, bb;
+          if (glow > 0.05) {
+            rr = Math.round(175 + glow * 55);
+            gg = Math.round(145 + glow * 75);
+            bb = 252;
+          } else {
+            rr = Math.round(95 + dn * 55);
+            gg = Math.round(55 + dn * 50);
+            bb = Math.round(195 + dn * 48);
+          }
+
+          ctx.beginPath();
+          ctx.arc(x, y, dotR, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(' + rr + ', ' + gg + ', ' + bb + ', ' + alpha.toFixed(3) + ')';
+          ctx.fill();
+        }
+      }
+    }
+
+    function draw() {
+      if (!running) { requestAnimationFrame(draw); return; }
+      time += 0.003;
+      ctx.clearRect(0, 0, w, h);
+
+      // halo first (behind everything)
+      drawHalo();
+
+      // compute all layers
+      for (var l = 0; l < layers.length; l++) {
+        computeLayer(layers[l], l);
+      }
+
+      // draw back to front (layer 0 = back, layer 2 = front)
+      for (var l = 0; l < layers.length; l++) {
+        drawLayer(layers[l], l);
       }
 
       requestAnimationFrame(draw);
