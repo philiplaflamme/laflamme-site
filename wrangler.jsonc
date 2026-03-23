@@ -8,9 +8,6 @@
   },
   "assets": {
     "directory": ".",
-    "exclude": ["src"]
-  },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+    "exclude": ["src", "wrangler.jsonc", ".gitignore", ".git"]
+  }
 }
