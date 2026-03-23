@@ -653,6 +653,58 @@ section { position: relative; z-index: 1; }
 .form-group select option { background: var(--charcoal); color: var(--text-primary); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form-submit { width: 100%; margin-top: 0.5rem; }
+
+/* ── Privacy banner ── */
+#privacyBanner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 9999;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 1.2rem 2rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+#privacyBanner.show { display: flex; }
+
+#privacyBanner p {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  max-width: 680px;
+}
+
+#privacyBanner a {
+  color: var(--purple-light);
+  text-decoration: none;
+}
+
+#privacyBanner a:hover { color: var(--white); }
+
+#privacyBanner button {
+  padding: 0.5rem 1.4rem;
+  background: var(--purple-main);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+#privacyBanner button:hover {
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+}
+
 /* ── Footer ── */
 footer {
   padding: 3rem 0;
@@ -909,10 +961,16 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
   </div>
 </section>
 
+<!-- Privacy banner -->
+<div id="privacyBanner">
+  <p data-i18n="privacy.banner">Ce site recueille des renseignements personnels via le formulaire de contact. En poursuivant votre navigation, vous acceptez notre <a href="/confidentialite.html">politique de confidentialité</a>.</p>
+  <button id="privacyAccept" data-i18n="privacy.accept">J'accepte</button>
+</div>
+
 <!-- Footer -->
 <footer>
   <div class="container">
-    <p data-i18n="footer">&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · Tous droits réservés</p>
+    <p data-i18n="footer">&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · <a href="/confidentialite.html" data-i18n="footer.privacy">Confidentialité</a> · Tous droits réservés</p>
   </div>
 </footer>
 
@@ -1571,7 +1629,10 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
         'form.msg': 'Message',
         'form.msg_ph': 'Describe your project or need...',
         'form.submit': 'Send message ↗',
-        'footer': '&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · All rights reserved'
+        'privacy.banner': 'This site collects personal information through the contact form. By continuing to browse, you accept our <a href="/confidentialite.html">privacy policy</a>.',
+        'privacy.accept': 'I accept',
+        'footer.privacy': 'Privacy',
+        'footer': '&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · <a href="/confidentialite.html">Privacy</a> · All rights reserved'
       },
       fr: {
         'nav.services': 'Services',
@@ -1616,7 +1677,10 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
         'form.msg': 'Message',
         'form.msg_ph': 'Décrivez votre projet ou besoin...',
         'form.submit': 'Envoyer le message ↗',
-        'footer': '&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · Tous droits réservés'
+        'privacy.banner': 'Ce site recueille des renseignements personnels via le formulaire de contact. En poursuivant votre navigation, vous acceptez notre <a href="/confidentialite.html">politique de confidentialité</a>.',
+        'privacy.accept': 'J\'accepte',
+        'footer.privacy': 'Confidentialité',
+        'footer': '&copy; 2026 Philip-Antoine Dupuis Laflamme · <a href="mailto:info@dupuislaflamme.ca">dupuislaflamme.ca</a> · <a href="/confidentialite.html">Confidentialité</a> · Tous droits réservés'
       }
     };
 
@@ -1638,6 +1702,22 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
 
     btn.addEventListener('click', function() {
       applyLang(lang === 'fr' ? 'en' : 'fr');
+    });
+  })();
+
+  // ── Privacy banner ──
+  (function() {
+    var banner = document.getElementById('privacyBanner');
+    var acceptBtn = document.getElementById('privacyAccept');
+    if (!banner || !acceptBtn) return;
+
+    if (!localStorage.getItem('privacyAccepted')) {
+      banner.classList.add('show');
+    }
+
+    acceptBtn.addEventListener('click', function() {
+      localStorage.setItem('privacyAccepted', '1');
+      banner.classList.remove('show');
     });
   })();
 })();
