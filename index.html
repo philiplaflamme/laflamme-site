@@ -1040,15 +1040,19 @@ Les mots comptent. Le bon mot, au bon moment, peut tout changer.</p>
     init();
     window.addEventListener('resize', function() { resize(); });
 
-    document.addEventListener('mousemove', function(e) {
-      var rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    }, { passive: true });
+    var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    document.addEventListener('mouseleave', function() {
-      mouseX = -9999; mouseY = -9999;
-    }, { passive: true });
+    if (!isTouchDevice) {
+      document.addEventListener('mousemove', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      }, { passive: true });
+
+      document.addEventListener('mouseleave', function() {
+        mouseX = -9999; mouseY = -9999;
+      }, { passive: true });
+    }
 
     setTimeout(function() { canvas.classList.add('visible'); }, 1400);
 
