@@ -885,7 +885,7 @@ footer a:hover { color: var(--white); }
         </div>
         <div class="expertise-text reveal">
           <p data-i18n="about.p1">
-            Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J'ai occupé des fonctions décisionnelles au sein de formations politiques québécoises, ce qui m'a donné une compréhension intime des rouages du pouvoir, des médias et de l'opinion publique.
+            Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J'ai œuvré auprès de politiciens d'envergure, aux paliers municipal, provincial et fédéral, ce qui m'a donné une compréhension intime des rouages du pouvoir, des médias et de l'opinion publique.
           </p>
           <p data-i18n="about.p2">
             En parallèle, j'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l'Université Bishop's et à l'Université de Sherbrooke. J'ai collaboré avec des experts en psychologie du développement et de l'éducation, participé à des travaux publiés et contribué à l'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.
@@ -1213,7 +1213,8 @@ footer a:hover { color: var(--white); }
     if (!ctx) return;
 
     var particles = [];
-    var count = 50;
+    var screenW = window.innerWidth;
+    var count = screenW >= 1400 ? 120 : screenW >= 1024 ? 90 : screenW >= 768 ? 70 : 50;
     var linkDist = 140;
     var mouseRadius = 180;
     var mouseX = -9999, mouseY = -9999;
@@ -1237,7 +1238,7 @@ footer a:hover { color: var(--white); }
           y: Math.random() * h,
           vx: (Math.random() - 0.5) * 0.3,
           vy: (Math.random() - 0.5) * 0.3,
-          r: 1.2 + Math.random() * 1.2
+          r: 1.5 + Math.random() * 1.5
         });
       }
     }
@@ -1305,7 +1306,7 @@ footer a:hover { color: var(--white); }
           var dy = a.y - b.y;
           var d = Math.sqrt(dx * dx + dy * dy);
           if (d < linkDist) {
-            var alpha = (1 - d / linkDist) * 0.15;
+            var alpha = (1 - d / linkDist) * 0.22;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -1346,7 +1347,7 @@ footer a:hover { color: var(--white); }
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(167, 139, 250, ' + (0.25 + glow).toFixed(3) + ')';
+        ctx.fillStyle = 'rgba(167, 139, 250, ' + (0.4 + glow).toFixed(3) + ')';
         ctx.fill();
       }
 
@@ -1947,13 +1948,13 @@ footer a:hover { color: var(--white); }
         'services.s1.title': 'Consulting & analysis',
         'services.s1.desc': 'Strategic positioning, reputation management and public affairs. A perspective sharpened by years of experience behind the scenes of politics.',
         'services.s2.title': 'Digital communications',
-        'services.s2.desc': 'Online presence strategy, targeted campaigns and web content management. Optimizing the digital footprint for organizations and decision-makers.',
+        'services.s2.desc': 'Online presence strategy, targeted campaigns and web content management. The right word, at the right time, can change everything.',
         'services.s3.title': 'Political strategy',
-        'services.s3.desc': 'Active advisor to elected officials and political party executives at every level, from municipal to federal. Words matter. The right word, at the right time, can change everything.',
+        'services.s3.desc': 'Campaign planning, electoral positioning and strategic content preparation. An approach grounded in methodical academic work, grassroots insight and a deep understanding of partisan dynamics.',
         'about.label': 'Who I am',
         'about.title': 'Politics, research<br>and computers',
-        'about.p1': 'My career sits at the crossroads of <strong>active politics, academic research and digital communications</strong>. I held decision-making roles within Quebec political organizations, giving me an intimate understanding of the workings of power, media and public opinion.',
-        'about.p2': 'In parallel, I spent several years in <strong>social science research</strong> as a research assistant at Bishop\'s University and Université de Sherbrooke. I collaborated with experts in developmental and educational psychology, contributed to published research and helped organize international conferences bringing together renowned scholars in work psychology and concept psychology.',
+        'about.p1': 'My career sits at the crossroads of <strong>active politics, academic research and digital communications</strong>. I have worked alongside prominent politicians at the municipal, provincial and federal levels, giving me an intimate understanding of the workings of power, media and public opinion.',
+        'about.p2': 'In parallel, I spent several years in <strong>social science research</strong> as a research assistant at Bishop\'s University and Université de Sherbrooke. I collaborated with experts in developmental and educational psychology, contributed to published work and helped organize international conferences bringing together renowned scholars in work psychology and concept psychology.',
         'about.p3': 'This scientific rigour directly informs my practice. Understanding <strong>how people think, learn and make decisions</strong>, while being at the very heart of the issues, allows me to put this methodical approach and knowledge at the service of organizations that have results to deliver.',
         'str.1': 'Strategic consulting and public affairs',
         'str.2': 'Digital communications and web marketing',
@@ -1995,13 +1996,13 @@ footer a:hover { color: var(--white); }
         'services.s1.title': 'Conseil et analyse',
         'services.s1.desc': 'Accompagnement en positionnement, gestion de la réputation et affaires publiques. Un regard aiguisé par des années d\'expérience dans les coulisses de la politique.',
         'services.s2.title': 'Communications numériques',
-        'services.s2.desc': 'Stratégie de présence en ligne, campagnes ciblées et gestion de contenu web. Optimisation de l\'empreinte numérique pour organisations et décideurs.',
+        'services.s2.desc': 'Stratégie de présence en ligne, campagnes ciblées et gestion de contenu web. Le bon mot, au bon moment, peut tout changer.',
         'services.s3.title': 'Stratégie politique',
-        'services.s3.desc': 'Conseiller actif auprès d\'élus et de cadres de partis politiques de tous les paliers, du municipal au fédéral.\nLes mots comptent. Le bon mot, au bon moment, peut tout changer.',
+        'services.s3.desc': 'Planification de campagnes, positionnement électoral et préparation de contenus stratégiques. Une approche fondée sur la rigueur, l\'écoute du terrain et une connaissance fine des dynamiques partisanes.',
         'about.label': 'Qui je suis',
         'about.title': 'Politique, recherche<br>et numérique',
-        'about.p1': 'Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J\'ai occupé des fonctions décisionnelles au sein de formations politiques québécoises, ce qui m\'a donné une compréhension intime des rouages du pouvoir, des médias et de l\'opinion publique.',
-        'about.p2': 'En parallèle, j\'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l\'Université Bishop\'s et à l\'Université de Sherbrooke. J\'ai collaboré avec des experts en psychologie du développement et de l\'éducation, participé à des travaux de recherche publiés et contribué à l\'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.',
+        'about.p1': 'Mon parcours se situe au croisement de <strong>la politique active, de la recherche universitaire et des communications numériques</strong>. J\'ai œuvré auprès de politiciens d\'envergure, aux paliers municipal, provincial et fédéral, ce qui m\'a donné une compréhension intime des rouages du pouvoir, des médias et de l\'opinion publique.',
+        'about.p2': 'En parallèle, j\'ai consacré plusieurs années à la <strong>recherche en sciences sociales</strong>, comme assistant de recherche à l\'Université Bishop\'s et à l\'Université de Sherbrooke. J\'ai collaboré avec des experts en psychologie du développement et de l\'éducation, participé à des travaux publiés et contribué à l\'organisation de colloques internationaux réunissant des chercheurs de renom en psychologie du travail et des concepts.',
         'about.p3': 'Cette rigueur scientifique nourrit directement ma pratique. Comprendre <strong>comment les gens pensent, apprennent et prennent des décisions</strong>, tout en étant au cœur même des enjeux, me permet de mettre cette approche méthodique et mes connaissances au service d\'organisations qui ont des résultats à livrer.',
         'str.1': 'Conseil stratégique et affaires publiques',
         'str.2': 'Communications numériques et marketing web',
