@@ -101,7 +101,7 @@ nav {
   background: rgba(15, 15, 18, 0.8);
   border-bottom: 1px solid var(--border);
   transition: padding 0.4s ease, background 0.4s ease;
-  will-change: padding, background;
+  contain: layout style;
 }
 
 nav.scrolled {
@@ -209,16 +209,12 @@ section { position: relative; z-index: 1; }
 
 /* ── Hero ── */
 .hero {
+  min-height: 100vh;
   min-height: 100svh;
-  min-height: 100vh; /* fallback for older browsers */
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
-}
-
-@supports (min-height: 100svh) {
-  .hero { min-height: 100svh; }
 }
 
 #heroCanvas {
@@ -230,7 +226,6 @@ section { position: relative; z-index: 1; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease;
-  will-change: transform;
 }
 
 #heroCanvas.visible { opacity: 1; }
