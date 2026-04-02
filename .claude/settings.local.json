@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo:*)",
+      "WebSearch",
+      "Bash(claude mcp:*)",
+      "Bash(mv \".git/config \\(# Name clash 2026-03-25 vkm4ecC #\\)\" \".git/config\")",
+      "Bash(mv \".git/HEAD \\(# Name clash 2026-03-25 al0dtpC #\\)\" \".git/HEAD\")",
+      "Bash(mv \".git/index \\(# Name clash 2026-03-25 6vrydiC #\\)\" \".git/index\")",
+      "Bash(mv \".git/refs/heads/main \\(# Name clash 2026-03-25 9rl7h4C #\\)\" \".git/refs/heads/main\")",
+      "Bash(mv \".git/refs/heads/services-background-glow \\(# Name clash 2026-03-25 nx0fj2C #\\)\" \".git/refs/heads/services-background-glow\")",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__workers_get_worker",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__set_active_account",
+      "WebFetch(domain:laflamme-site.p-978.workers.dev)",
+      "Bash(rm index.html confidentialite.html favicon.svg)",
+      "Bash(rm -rf fonts/)"
+    ]
+  }
+}
