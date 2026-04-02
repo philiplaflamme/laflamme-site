@@ -1224,16 +1224,20 @@ footer a:hover { color: var(--white); }
     var mouseX = -9999, mouseY = -9999;
     var w, h, dpr;
 
-    var lastW = 0;
-
-    function resize(force) {
+    function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       var newW = canvas.clientWidth;
       var newH = canvas.clientHeight;
-      // On mobile, address bar hide/show only changes height.
-      // Skip height-only resize to prevent constellation jump.
-      if (!force && newW === lastW && w > 0) return;
-      lastW = newW;
+      // Anchor particles to the bottom of the hero so that when the
+      // mobile address bar hides (height grows), the shift happens at
+      // the top (already scrolling off-screen) instead of visibly
+      // pushing particles down.
+      if (h && newH !== h) {
+        var dy = newH - h;
+        for (var i = 0; i < particles.length; i++) {
+          particles[i].y += dy;
+        }
+      }
       w = newW;
       h = newH;
       canvas.width = w * dpr;
@@ -1242,7 +1246,7 @@ footer a:hover { color: var(--white); }
     }
 
     function init() {
-      resize(true);
+      resize();
       particles = [];
       for (var i = 0; i < count; i++) {
         particles.push({
@@ -1256,7 +1260,7 @@ footer a:hover { color: var(--white); }
     }
 
     init();
-    window.addEventListener('resize', function() { resize(false); });
+    window.addEventListener('resize', function() { resize(); });
 
     var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
