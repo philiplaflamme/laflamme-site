@@ -8,6 +8,7 @@
   },
   "assets": {
     "directory": ".",
-    "exclude": ["src", "wrangler.jsonc", ".gitignore", ".git"]
+    "binding": "ASSETS",
+    "serve_directly": false
   }
 }
