@@ -1236,8 +1236,8 @@ footer a:hover { color: var(--white); }
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: (Math.random() - 0.5) * 0.18,
           r: 1.5 + Math.random() * 1.5
         });
       }
@@ -1292,9 +1292,9 @@ footer a:hover { color: var(--white); }
 
         // speed limit
         var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > 0.6) {
-          p.vx *= 0.6 / speed;
-          p.vy *= 0.6 / speed;
+        if (speed > 0.35) {
+          p.vx *= 0.35 / speed;
+          p.vy *= 0.35 / speed;
         }
       }
 
@@ -1306,12 +1306,12 @@ footer a:hover { color: var(--white); }
           var dy = a.y - b.y;
           var d = Math.sqrt(dx * dx + dy * dy);
           if (d < linkDist) {
-            var alpha = (1 - d / linkDist) * 0.22;
+            var alpha = (1 - d / linkDist) * 0.38;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
             ctx.strokeStyle = 'rgba(139, 92, 246, ' + alpha.toFixed(3) + ')';
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
@@ -1810,24 +1810,32 @@ footer a:hover { color: var(--white); }
         // advance angle
         o.angle += o.speed;
 
-        // trail — longer when fast
+        // trail — tapered arc segments that thin out toward the tail
         var currentBoost = Math.abs(o.speed / o.baseSpeed);
-        var trailLen = Math.floor(6 + currentBoost * 4);
-        var trailStep = Math.abs(o.speed) * 12;
+        var trailArc = Math.abs(o.speed) * 30 * (1 + currentBoost * 0.3);
         var sign = o.speed >= 0 ? 1 : -1;
-        for (var t = 1; t <= trailLen; t++) {
-          var ta = o.angle - sign * t * trailStep;
-          var tbx = Math.cos(ta) * rx;
-          var tby = Math.sin(ta) * ry;
-          var twx = cx + tbx * tcos - tby * tsin;
-          var twy = cy + tbx * tsin + tby * tcos;
-          var fade = 1 - t / (trailLen + 1);
-          var talpha = fade * 0.22 * o.alpha;
-          var tr = o.bodyR * (1 - t * 0.04);
+        var trailSegs = 20;
+        ctx.lineCap = 'butt';
+        for (var t = 0; t < trailSegs; t++) {
+          var frac1 = t / trailSegs;
+          var frac2 = (t + 1) / trailSegs;
+          var a1 = o.angle - sign * frac1 * trailArc;
+          var a2 = o.angle - sign * frac2 * trailArc;
+          var fade = 1 - frac1;
+          var talpha = fade * fade * 0.4 * o.alpha;
+          var tw = o.bodyR * 1.5 * fade;
+          if (talpha < 0.005 || tw < 0.2) break;
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(tiltRad);
           ctx.beginPath();
-          ctx.arc(twx, twy, Math.max(0.5, tr), 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + o.color.join(',') + ', ' + talpha.toFixed(3) + ')';
-          ctx.fill();
+          var sA = sign > 0 ? a2 : a1;
+          var eA = sign > 0 ? a1 : a2;
+          ctx.ellipse(0, 0, rx, ry, 0, sA, eA);
+          ctx.restore();
+          ctx.strokeStyle = 'rgba(' + o.color.join(',') + ', ' + talpha.toFixed(3) + ')';
+          ctx.lineWidth = tw;
+          ctx.stroke();
         }
 
         // body
