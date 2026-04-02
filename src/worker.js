@@ -37,9 +37,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Block access to config/dot files
-    const blocked = ['/wrangler.jsonc', '/.gitignore', '/.git'];
-    if (blocked.some(b => url.pathname.startsWith(b))) {
+    // Block access to config/dot files and internal directories
+    const blockedExact = ['/wrangler.jsonc', '/.gitignore', '/.assetsignore'];
+    const blockedPrefix = ['/.git', '/.claude', '/.wrangler', '/src'];
+    if (blockedExact.includes(url.pathname) || blockedPrefix.some(b => url.pathname.startsWith(b))) {
       return new Response('Not found', { status: 404 });
     }
 
