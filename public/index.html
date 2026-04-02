@@ -209,11 +209,16 @@ section { position: relative; z-index: 1; }
 
 /* ── Hero ── */
 .hero {
-  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100vh; /* fallback for older browsers */
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
+}
+
+@supports (min-height: 100svh) {
+  .hero { min-height: 100svh; }
 }
 
 #heroCanvas {
@@ -1190,8 +1195,9 @@ footer a:hover { color: var(--white); }
   // ── Hero parallax lines ──
   var heroLines = document.querySelectorAll('.hero-bg-line');
   if (heroLines.length) {
+    var parallaxTicking = false;
     window.addEventListener('scroll', function() {
-      if (!scrollTicking) {
+      if (!parallaxTicking) {
         requestAnimationFrame(function() {
           var y = window.scrollY;
           if (y < window.innerHeight) {
@@ -1200,7 +1206,9 @@ footer a:hover { color: var(--white); }
               line.style.transform = 'translateY(' + (y * speed) + 'px)';
             });
           }
+          parallaxTicking = false;
         });
+        parallaxTicking = true;
       }
     }, { passive: true });
   }
@@ -1220,17 +1228,25 @@ footer a:hover { color: var(--white); }
     var mouseX = -9999, mouseY = -9999;
     var w, h, dpr;
 
-    function resize() {
+    var lastW = 0;
+
+    function resize(force) {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth;
-      h = canvas.clientHeight;
+      var newW = canvas.clientWidth;
+      var newH = canvas.clientHeight;
+      // On mobile, address bar hide/show only changes height.
+      // Skip height-only resize to prevent constellation jump.
+      if (!force && newW === lastW && w > 0) return;
+      lastW = newW;
+      w = newW;
+      h = newH;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function init() {
-      resize();
+      resize(true);
       particles = [];
       for (var i = 0; i < count; i++) {
         particles.push({
@@ -1244,7 +1260,7 @@ footer a:hover { color: var(--white); }
     }
 
     init();
-    window.addEventListener('resize', function() { resize(); });
+    window.addEventListener('resize', function() { resize(false); });
 
     var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
